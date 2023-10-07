@@ -54,10 +54,16 @@ void loop(void)
 		arg = toker(input_str); /* tokonize the input */
 		if (arg[0] != NULL)
 		{
+			if (_strcmp(arg[0], "exit") == 0)
+			{
+				free(input_str);
+				free(arg);
+				exit(1);
+			}
 			cmd = checkpoint(arg);
 			if (cmd == NULL) /*we couldn't find the path*/
-			perror("./shell:\n"); /* we have to pass variable */
-			if (cmd)
+				perror("./shell:"); /* we have to pass variable */
+			else
 			{
 				child_pid = fork();
 				if (child_pid == -1)
@@ -78,13 +84,17 @@ void loop(void)
 						free(cmd);
 				}
 			}
+		}
 			if (status != -1)
 			{
 				/* freeing memory */
 				free(input_str);
 				free(arg);
+				printf("I'm free\n");
 			}
-		}
+		
+		
+		
 	} /* edited the do while loop into one while loop */
 }
 /**

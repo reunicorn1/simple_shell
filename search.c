@@ -18,20 +18,15 @@ char *checkpoint(char **arg)
 {
 	char *cmd;
 
-	/* wildcard globing can occur here through a called function */
+	/* wildcard globing can occur here through a called function
 	if (_strcmp(arg[0], "exit") == 0)
-		exit(0); /* the issue here is that there's nothing freed */
+		exit(0);  the issue here is that there's nothing freed */
 	/* compare with other built in functions in the future here */
 	if (arg[0][0] == '/')
 		return (arg[0]);
-	else
-	{
-		cmd = _which(arg[0]);
-		if (cmd == NULL)
-			return (NULL);
-		return (cmd);
-	}
-	return (NULL);
+	
+	cmd = _which(arg[0]);
+	return (cmd);
 }
 
 /**
