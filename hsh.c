@@ -45,43 +45,48 @@ void loop(void)
 		/* taking user input */
 		write(1, "UN!CORN-SHELL -> ", 18); /* to be changed later */
 		input_str = recieve_input(); /* getline in the hood */
-		printf("%s\n", input_str); 
+		/*printf("%s\n", input_str);*/
 		if (!input_str)
-			exit(1); /* we terminate silently in EOF signal */
-		arg = toker(input_str); /* tokonize the input */
-		cmd = checkpoint(arg);
-		if (cmd == NULL) /*we couldn't find the path*/
-			write(1, "./shell: No such file or directory\n", 35); /* we have to pass variable */
-		if (cmd)
 		{
-			child_pid = fork();
-			if (child_pid == -1)
+			write(1,"This is end of file\n", 20);
+			exit(1); /* we terminate silently in EOF signal */
+		}
+		arg = toker(input_str); /* tokonize the input */
+		if (arg[0] != NULL)
+		{
+			cmd = checkpoint(arg);
+			if (cmd == NULL) /*we couldn't find the path*/
+			perror("./shell:\n"); /* we have to pass variable */
+			if (cmd)
 			{
-				perror("Error: fork failed\n");
-				return;
-			}
-			if (child_pid == 0)
-			{
+				child_pid = fork();
+				if (child_pid == -1)
+				{
+					perror("Error: fork failed\n");
+					return;
+				}
+				if (child_pid == 0)
+				{
 				status = execute(arg, cmd);
 				if (status == -1)
 					perror("Error: execution failed\n");
+				}
+				else
+				{
+					wait(NULL);
+					if (arg[0][0] != '/')
+						free(cmd);
+				}
 			}
-			else
+			if (status != -1)
 			{
-				wait(NULL);
-				if (arg[0][0] != '/')
-					free(cmd);
+				/* freeing memory */
+				free(input_str);
+				free(arg);
 			}
-		}
-		if (status != -1)
-		{
-			/* freeing memory */
-			free(input_str);
-			free(arg);
 		}
 	} /* edited the do while loop into one while loop */
 }
-
 /**
  * main - Entry point
  *

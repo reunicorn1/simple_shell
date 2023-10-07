@@ -47,9 +47,9 @@ char **toker(char *str)
 	while (1)
 	{
 		if (i == 0)
-			arr[i] = strtok(str, " ");
+			arr[i] = strtok(str, " \t");
 		else
-			arr[i] = strtok(NULL, " ");
+			arr[i] = strtok(NULL, " \t");
 		if (arr[i] == NULL)
 			break;
 		i++;
