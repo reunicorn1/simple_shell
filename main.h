@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -29,7 +30,7 @@ char *checkpoint(char **arg, char *string);
 char *_which(char *arg);
 
 /*our own version of functions*/
-ssize_t _getline(char **lineptr, size_t *restrict n, FILE *restrict stream);
+ssize_t _getline(char **lineptr, (size_t *restrict n), FILE *restrict stream);
 
 /*string manipulation functons*/
 int _strcmp(char *s1, char *s2);

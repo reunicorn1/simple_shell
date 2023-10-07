@@ -41,29 +41,18 @@ void loop(void)
 
 	while (1)
 	{
-		/*count++;  to keep track of number of loops */
+		/*count++;  to keep track of number of loops*/
 		/* taking user input */
 		write(1, "UN!CORN-SHELL -> ", 18); /* to be changed later */
 		input_str = recieve_input(); /* getline in the hood */
-		/*printf("%s\n", input_str);*/
-		if (!input_str)
-		{
-			write(1,"This is end of file\n", 20);
-			exit(1); /* we terminate silently in EOF signal */
-		}
+		printf("%s\n", input_str);
 		arg = toker(input_str); /* tokonize the input */
 		if (arg[0] != NULL)
 		{
-			if (_strcmp(arg[0], "exit") == 0)
-			{
-				free(input_str);
-				free(arg);
-				exit(1);
-			}
-			cmd = checkpoint(arg);
+			cmd = checkpoint(arg, input_str);
 			if (cmd == NULL) /*we couldn't find the path*/
-				perror("./shell:"); /* we have to pass variable */
-			else
+				perror("./shell:"); /* we have to pass variables */
+			if ((!(_strcmp(arg[0], "env") == 0)) && cmd)
 			{
 				child_pid = fork();
 				if (child_pid == -1)
@@ -85,16 +74,15 @@ void loop(void)
 				}
 			}
 		}
-			if (status != -1)
-			{
-				/* freeing memory */
-				free(input_str);
-				free(arg);
-				printf("I'm free\n");
-			}
-		
-		
-		
+		if (status != -1)
+		{
+			/* freeing memory */
+			free(input_str);
+			free(arg);
+			printf("I'm free\n");
+		}
+		if (!(isatty(STDIN_FILENO)))
+			exit(0);
 	} /* edited the do while loop into one while loop */
 }
 /**

@@ -8,7 +8,7 @@
  * @stream: a file to read from
  * Return: number of bytes read from stream
  */
-ssize_t _getline(char **lineptr, size_t *restrict n, FILE *restrict stream)
+ssize_t _getline(char **lineptr, (size_t *restrict n), FILE *restrict stream)
 {
 	int ch;
 	size_t  i = 0;

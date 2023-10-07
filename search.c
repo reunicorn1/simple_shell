@@ -14,13 +14,24 @@
  * Return: a char which is somehow the path if required
  */
 
-char *checkpoint(char **arg)
+char *checkpoint(char **arg, char *string)
 {
 	char *cmd;
-
-	/* wildcard globing can occur here through a called function
+	char *code = "1";
+	/* wildcard globing can occur here through a called function */
 	if (_strcmp(arg[0], "exit") == 0)
-		exit(0);  the issue here is that there's nothing freed */
+	{
+		if (arg[1] != NULL)
+			code = arg[1];
+		free(string);
+		free(arg);
+		exit(_atoi(code));
+	}
+	if (_strcmp(arg[0], "env") == 0)
+	{
+		_env();
+		return ("env");
+	}
 	/* compare with other built in functions in the future here */
 	if (arg[0][0] == '/')
 		return (arg[0]);

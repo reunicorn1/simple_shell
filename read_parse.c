@@ -26,8 +26,12 @@ char *recieve_input(void)
 	}
 	input_len = getline(&str, &len, stdin);
 	printf("%d\n", input_len);
-	if (input_len == -1)
-		return (NULL);
+	if (input_len == -1)/*basically EOF*/
+	{
+		write(1,"This is end of file\n", 20);
+		free(str);
+		exit(0);
+	}
 	str[input_len - 1] = '\0';
 	return (str);
 }
