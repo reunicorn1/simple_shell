@@ -10,6 +10,7 @@
 /**
  * checkpoint - reads the array of strings and process it accordingly
  * @arg: is the array of pointers composing the tokens
+ * @string: contains the raw user input
  *
  * Return: a char which is somehow the path if required
  */
@@ -35,7 +36,7 @@ char *checkpoint(char **arg, char *string)
 	/* compare with other built in functions in the future here */
 	if (arg[0][0] == '/')
 		return (arg[0]);
-	
+
 	cmd = _which(arg[0]);
 	return (cmd);
 }

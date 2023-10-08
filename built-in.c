@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include "main.h"
 
-extern char **environ;
+/*extern char **environ;*/
 
 /**
  * _env - prints the environment

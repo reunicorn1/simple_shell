@@ -93,14 +93,15 @@ int _printf(const char *format, ...)
 	va_list arg;
 	int (*ptr)(va_list);
 	print_fun f[] = {
-		{"%s", _printfstring}, {"%d", _printfint}
- 	};
+	{"%s", _printfstring},
+	{"%d", _printfint}
+	};
 
- 	va_start(arg, format);
- 	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
- 		return (-1);
- 	for (i = 0, sum = 0; format[i]; i++)
- 	{
+	va_start(arg, format);
+	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
+		return (-1);
+	for (i = 0, sum = 0; format[i]; i++)
+	{
 		flag = 0;
 		for (j = 0; j < 2; j++)
 		{

@@ -7,7 +7,6 @@
 #include <sys/wait.h>
 #include "main.h"
 
-extern char** environ;
 
 /**
  * execute - execute the program required
@@ -51,7 +50,7 @@ void loop(void)
 		{
 			cmd = checkpoint(arg, input_str);
 			if (cmd == NULL) /*we couldn't find the path*/
-				perror("./shell:"); /* we have to pass variables */
+				perror(arg[0]); /* we have to pass variables */
 			if ((!(_strcmp(arg[0], "env") == 0)) && cmd)
 			{
 				child_pid = fork();

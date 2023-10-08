@@ -24,11 +24,11 @@ char *recieve_input(void)
 		perror("Error: couldn't allocate memory\n");
 		return (NULL);
 	}
-	input_len = getline(&str, &len, stdin);
+	input_len = _getline(&str, &len, stdin);
 	printf("%d\n", input_len);
 	if (input_len == -1)/*basically EOF*/
 	{
-		write(1,"This is end of file\n", 20);
+		write(1, "This is end of file\n", 20);
 		free(str);
 		exit(0);
 	}

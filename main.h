@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+extern char **environ;
 /**
  * struct print_fun - Struct print_fun
  *
@@ -30,7 +30,7 @@ char *checkpoint(char **arg, char *string);
 char *_which(char *arg);
 
 /*our own version of functions*/
-ssize_t _getline(char **lineptr, (size_t *restrict n), FILE *restrict stream);
+ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 
 /*string manipulation functons*/
 int _strcmp(char *s1, char *s2);
