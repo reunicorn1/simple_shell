@@ -9,7 +9,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
 extern char **environ;
+char **new_environ;
+
 /**
  * struct print_fun - Struct print_fun
  *
@@ -45,5 +48,10 @@ int _printfstring(va_list args);
 int _printf(const char *format, ...);
 void _env(void);
 int _atoi(char *s);
+int _strncmp(char *s1, char *s2, size_t n);
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+int _setenv(char **arg);
+int _unsetenv(char **arg);
+int is_builin(char *cmd);
 
 #endif

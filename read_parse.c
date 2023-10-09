@@ -30,6 +30,7 @@ char *recieve_input(void)
 	{
 		write(1, "This is end of file\n", 20);
 		free(str);
+		free(new_environ);
 		exit(0);
 	}
 	str[input_len - 1] = '\0';

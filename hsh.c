@@ -51,7 +51,7 @@ void loop(void)
 			cmd = checkpoint(arg, input_str);
 			if (cmd == NULL) /*we couldn't find the path*/
 				perror(arg[0]); /* we have to pass variables */
-			if ((!(_strcmp(arg[0], "env") == 0)) && cmd)
+			if (cmd && (is_builin(cmd) != 0))
 			{
 				child_pid = fork();
 				if (child_pid == -1)
@@ -92,7 +92,14 @@ void loop(void)
 
 int main(void)
 {
+	new_environ = (char **)malloc(sizeof(char *));
+	if (new_environ == NULL)
+	{
+		perror("Failed to allocate memory for new_environ");
+		return 1;
+	}
+	new_environ[0] = NULL;
 	loop();
-
+	free(new_environ);
 	return (0);
 }

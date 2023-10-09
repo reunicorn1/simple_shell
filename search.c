@@ -17,8 +17,8 @@
 
 char *checkpoint(char **arg, char *string)
 {
-	char *cmd;
-	char *code = "1";
+	char *cmd, *code = "1";
+
 	/* wildcard globing can occur here through a called function */
 	if (_strcmp(arg[0], "exit") == 0)
 	{
@@ -26,12 +26,23 @@ char *checkpoint(char **arg, char *string)
 			code = arg[1];
 		free(string);
 		free(arg);
+		free(new_environ);
 		exit(_atoi(code));
 	}
 	if (_strcmp(arg[0], "env") == 0)
 	{
 		_env();
-		return ("env");
+		return (arg[0]);
+	}
+	if (_strcmp(arg[0], "setenv") == 0)
+	{
+		_setenv(arg);
+		return (arg[0]);
+	}
+	if (_strcmp(arg[0], "unsetenv") == 0)
+	{
+		_unsetenv(arg);
+		return (arg[0]);
 	}
 	/* compare with other built in functions in the future here */
 	if (arg[0][0] == '/')
@@ -77,4 +88,23 @@ char *_which(char *arg)
 	}
 	free(pathcopy);
 	return (NULL);
+}
+
+/**
+ * is_builin - checks if a string matches one of the builin commands
+ * @cmd: is the name of the builtin command
+ *
+ * Return: Nothing.
+ */
+
+int is_builin(char *cmd)
+{
+	if (_strcmp(cmd, "env") == 0)
+		return (0);
+	else if (_strcmp(cmd, "setenv") == 0)
+		return (0);
+	else if (_strcmp(cmd, "unsetenv") == 0)
+		return (0);
+	else
+		return (-1);
 }

@@ -40,3 +40,73 @@ int _atoi(char *s)
 	else
 		return (result);
 }
+
+/**
+ * _strcmp -  compares two strings
+ * @s1: is a variable of string type
+ * @s2: is a variable of string type
+ *
+ * Description: this function compares two strings
+ * Return: 0 if equal, +ve if s1 is larger, -ve if s1 is smaller
+ */
+
+int _strncmp(char *s1, char *s2, size_t n)
+{
+size_t i;
+
+	if (s1 == NULL && s2 == NULL)
+		return (0);
+	else if (s1 == NULL)
+		return (-1);
+	else if (s2 == NULL)
+		return (1);
+	for (i = 0; i < n && s1[i] != '\0' && s2[i] != '\0'; i++)
+	{
+		if (s1[i] - s2[i] != 0)
+			return ((int)(s1[i] - s2[i]));
+	}
+	if ((i == n) || (s1[i] == '\0' && s2[i] == '\0'))
+		return (0);
+	if (s1[i] == '\0')
+		return (-1);
+	else
+		return (1);
+}
+
+/**
+ * _realloc - reallocates a memory block using malloc and free
+ * @ptr: is a pointer to the memory previously allocated
+ * @old_size: is a variable of innt type
+ * @new_size: is a variable of int type
+ *
+ * Description: this function reallocates a memory block using malloc
+ * Return: pinter to the new memory
+ */
+
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
+{
+	void *new_ptr;
+
+	if (new_size == old_size)
+		return (ptr);
+	/* allocation of new memory */
+	if (new_size > 0 || ptr == NULL)
+	{
+		new_ptr = malloc(new_size);
+		if (new_ptr == NULL)
+			return (NULL);
+	}
+	/* copying process */
+	if (ptr != NULL && new_size > 0)
+	{
+		if (new_size < old_size)
+			old_size = new_size;
+		memcpy(new_ptr, ptr, old_size);
+	}
+	/* freeing process */
+	if (ptr != NULL)
+		free(ptr);
+	if (new_size == 0 && ptr != NULL)
+		return (NULL);
+	return (new_ptr);
+}
