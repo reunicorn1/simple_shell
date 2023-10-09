@@ -28,7 +28,7 @@ char *_strtok(char *str, char *dlm)
 {
 	static char *ptr;
 	static char *temp;
-	int i, j;
+	int i;
 
 	if (str != NULL)
 		ptr = str;
