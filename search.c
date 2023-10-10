@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -26,7 +27,6 @@ char *checkpoint(char **arg, char *string)
 			code = arg[1];
 		free(string);
 		free(arg);
-		free(new_environ);
 		exit(_atoi(code));
 	}
 	if (_strcmp(arg[0], "env") == 0)
@@ -68,11 +68,19 @@ char *_which(char *arg)
 
 	fullpath = malloc(1024);
 	if (fullpath == NULL)
+	{
+		errno = ENOMEM;
+		perror("");
 		return (NULL);
+	}
 	variableValue = getenv(variableName);
 	pathcopy = _strdup(variableValue);
 	if (pathcopy == NULL)
+	{
+		errno = ENOMEM;
+		perror("");
 		return (NULL);
+	}
 	token = strtok(pathcopy, ":");
 	while (token != NULL)
 	{
@@ -82,6 +90,7 @@ char *_which(char *arg)
 		if (access(fullpath, X_OK) == 0)
 		{
 			free(pathcopy);
+			perror("");
 			return (fullpath);
 		}
 		token = strtok(NULL, ":");

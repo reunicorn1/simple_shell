@@ -30,7 +30,6 @@ char *recieve_input(void)
 	{
 		write(1, "This is end of file\n", 20);
 		free(str);
-		free(new_environ);
 		exit(0);
 	}
 	str[input_len - 1] = '\0';
@@ -60,4 +59,17 @@ char **toker(char *str)
 		i++;
 	}
 	return (arr);
+}
+
+int is_input_eof(void)
+{
+	int c;
+
+	c = fgetc(stdin);
+	if (c == -1)
+	{
+		return (1);
+	}
+	ungetc(c, stdin);
+	return 0;
 }

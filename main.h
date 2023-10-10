@@ -11,7 +11,6 @@
 #include <sys/wait.h>
 
 extern char **environ;
-char **new_environ;
 
 /**
  * struct print_fun - Struct print_fun
@@ -54,5 +53,5 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 int _setenv(char **arg);
 int _unsetenv(char **arg);
 int is_builin(char *cmd);
-
+int is_input_eof(void);
 #endif

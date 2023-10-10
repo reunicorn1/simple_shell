@@ -21,6 +21,8 @@ int execute(char **arg, char *cmd)
 	int stat;
 
 	stat = execve(cmd, arg, environ);
+	if (stat == -1)
+		perror("Error: execution failed\n");
 	return (stat);
 }
 
@@ -35,14 +37,19 @@ void loop(void)
 	char *input_str;
 	char **arg, *cmd;
 	/*int count = 0;*/
-	int status;
 	pid_t child_pid;
-
+	int status;
 	while (1)
 	{
+		if (!(isatty(STDIN_FILENO)))
+		{
+			if (is_input_eof())
+				exit(0);
+		}
 		/*count++;  to keep track of number of loops*/
 		/* taking user input */
-		write(1, "UN!CORN-SHELL -> ", 18); /* to be changed later */
+		else
+			write(1, "UN!CORN-SHELL -> ", 18); /* to be changed later */
 		input_str = recieve_input(); /* getline in the hood */
 		printf("%s\n", input_str);
 		arg = toker(input_str); /* tokonize the input */
@@ -60,11 +67,7 @@ void loop(void)
 					return;
 				}
 				if (child_pid == 0)
-				{
-				status = execute(arg, cmd);
-				if (status == -1)
-					perror("Error: execution failed\n");
-				}
+					status = execute(arg, cmd);
 				else
 				{
 					wait(NULL);
@@ -80,8 +83,8 @@ void loop(void)
 			free(arg);
 			printf("I'm free\n");
 		}
-		if (!(isatty(STDIN_FILENO)))
-			exit(0);
+		/*if (!(isatty(STDIN_FILENO)))
+			exit(0);*/
 	} /* edited the do while loop into one while loop */
 }
 /**
@@ -92,14 +95,6 @@ void loop(void)
 
 int main(void)
 {
-	new_environ = (char **)malloc(sizeof(char *));
-	if (new_environ == NULL)
-	{
-		perror("Failed to allocate memory for new_environ");
-		return 1;
-	}
-	new_environ[0] = NULL;
 	loop();
-	free(new_environ);
 	return (0);
 }

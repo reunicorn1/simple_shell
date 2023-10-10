@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -30,37 +31,45 @@ int _setenv(char **arg)
 {
 	char *newenv;
 	int i, j;
+	static char **new_environ;
 
-	if (arg[1] == NULL || strlen(arg[1]) == 0 || arg[1][0] == '=')
+	if (arg[1] == NULL || _strlen(arg[1]) == 0 || arg[1][0] == '=')
 	{
-		perror("Invalid argument\n");
+		errno = EINVAL;
+		perror("");
 		return (-1);
 	}
 	if (arg[2] == NULL)
 		return (_unsetenv(arg));
-	newenv = malloc(sizeof(char) * (strlen(arg[1]) + strlen(arg[2]) + 2));
+	newenv = malloc(sizeof(char) * (_strlen(arg[1]) + _strlen(arg[2]) + 2));
 	if (newenv == NULL)
 	{
-		perror("Not enough space/cannot allocate memory\n");
+		errno = ENOMEM;
+		perror("");
 		return (-1);
 	}
-	strcpy(newenv, arg[1]);
-	strcat(newenv, "=");
-	strcat(newenv, arg[2]);
+	_strcpy(newenv, arg[1]);
+	_strcat(newenv, "=");
+	_strcat(newenv, arg[2]);
 	for (i = 0; environ[i] != NULL; i++)
 	{
-		if (strncmp(environ[i], arg[1], strlen(arg[1])) == 0)
+		if (_strncmp(environ[i], arg[1], _strlen(arg[1])) == 0)
 		{
-			if (strcmp(environ[i], newenv) == 0)
+			if (_strcmp(environ[i], newenv) == 0)
+			{
+				free(newenv);
 				return (0);
+			}
 			environ[i] = newenv;
 			return (0);
 		}
 	}
-	new_environ = (char **)realloc(new_environ, (i + 2) * sizeof(char *));
+	new_environ = (char **)_realloc(new_environ,
+			sizeof(new_environ), sizeof(char *) * (i + 2));
 	if (new_environ == NULL)
 	{
-		perror("Not enough space/cannot allocate memory\n");
+		errno = ENOMEM;
+		perror("");
 		return (-1);
 	}
 	for (j = 0; j < i; j++)
@@ -83,7 +92,8 @@ int _unsetenv(char **arg)
 
 	if (arg[1] == NULL || _strlen(arg[1]) == 0 || arg[1][0] == '=')
 	{
-		perror("Invalid argument\n");
+		errno = EINVAL;
+		perror("");
 		return (-1);
 	}
 	for (n = 0; environ[n] != NULL; n++)
@@ -92,13 +102,6 @@ int _unsetenv(char **arg)
 		{
 			for (m = n + 1; environ[n] != NULL; n++, m++)
 				environ[n] = environ[m];
-			/*environ[n] = NULL;
-			_realloc(environ, sizeof(environ), (sizeof(environ) - sizeof(*environ)));
-			if (environ == NULL)
-			{
-				perror("Not enough space/cannot allocate memory\n");
-				return (-1);
-			}*/
 			return (0);
 		}
 	}
