@@ -44,6 +44,11 @@ char *checkpoint(char **arg, char *string)
 		_unsetenv(arg);
 		return (arg[0]);
 	}
+	if (_strcmp(arg[0], "cd") == 0)
+	{
+		_cd(arg[1]);
+		return (arg[0]);
+	}
 	/* compare with other built in functions in the future here */
 	if (arg[0][0] == '/')
 		return (arg[0]);
@@ -113,6 +118,8 @@ int is_builin(char *cmd)
 	else if (_strcmp(cmd, "setenv") == 0)
 		return (0);
 	else if (_strcmp(cmd, "unsetenv") == 0)
+		return (0);
+	else if (_strcmp(cmd, "cd") == 0)
 		return (0);
 	else
 		return (-1);
