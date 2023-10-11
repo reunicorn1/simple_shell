@@ -16,7 +16,7 @@
  * Return: a char which is somehow the path if required
  */
 
-char *checkpoint(char **arg, char *string)
+char *checkpoint(char **arg, char *string, char ***_environ)
 {
 	char *cmd, *code = "1";
 
@@ -27,21 +27,22 @@ char *checkpoint(char **arg, char *string)
 			code = arg[1];
 		free(string);
 		free(arg);
-		exit(_atoi(code));
+		free_grid(*_environ);
+		exit(atoi(code));
 	}
 	if (_strcmp(arg[0], "env") == 0)
 	{
-		_env();
+		_env(_environ);
 		return (arg[0]);
 	}
 	if (_strcmp(arg[0], "setenv") == 0)
 	{
-		_setenv(arg);
+		_setenv(arg, _environ);
 		return (arg[0]);
 	}
 	if (_strcmp(arg[0], "unsetenv") == 0)
 	{
-		_unsetenv(arg);
+		_unsetenv(arg, _environ);
 		return (arg[0]);
 	}
 	if (_strcmp(arg[0], "cd") == 0)
@@ -56,7 +57,6 @@ char *checkpoint(char **arg, char *string)
 	cmd = _which(arg[0]);
 	return (cmd);
 }
-
 /**
  * _which - looks for the requried path
  * @arg: the argument which is the name of the executable
@@ -95,11 +95,11 @@ char *_which(char *arg)
 		if (access(fullpath, X_OK) == 0)
 		{
 			free(pathcopy);
-			perror("");
 			return (fullpath);
 		}
 		token = strtok(NULL, ":");
 	}
+	free(fullpath);
 	free(pathcopy);
 	return (NULL);
 }

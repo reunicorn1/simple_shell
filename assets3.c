@@ -110,3 +110,20 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 		return (NULL);
 	return (new_ptr);
 }
+
+/**
+ * free_grid - frees a 2 dimensional grid
+ * @grid: a two dimentional array previously created
+ *
+ * Description: this function  frees a 2 dimensional grid
+ * Return: non
+ */
+
+void free_grid(char **grid)
+{
+	int i;
+
+	for (i = 0; grid[i] != NULL; i++)
+		free(grid[i]);
+	free(grid);
+}

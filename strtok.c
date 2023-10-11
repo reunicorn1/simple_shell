@@ -48,12 +48,9 @@ char *_strtok(char *str, char *dlm)
 		if (is_dlm((int)ptr[i], dlm))
 		break;
 	}
-
 	temp = ptr;
 	if (*ptr == '\0')
-	{
 		return (NULL);
-	}
 	else
 	{
 		/**

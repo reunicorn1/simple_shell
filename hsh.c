@@ -12,15 +12,16 @@
  * execute - execute the program required
  * @arg: the array of pointers which are the tokens
  * @cmd: the pathname
+ * @_environ: a pointer of the array of environment variables
  *
  * Return: -1 in failure only
  */
 
-int execute(char **arg, char *cmd)
+int execute(char **arg, char *cmd, char ***_environ)
 {
 	int stat;
 
-	stat = execve(cmd, arg, environ);
+	stat = execve(cmd, arg, *_environ);
 	if (stat == -1)
 		perror("Error: execution failed\n");
 	return (stat);
@@ -28,17 +29,19 @@ int execute(char **arg, char *cmd)
 
 /**
  * loop - the real engine beind how simple shell work
+ * @_environ: a pointer of the array of environment variables
  *
  * Return: Nothing.
  */
 
-void loop(void)
+void loop(char ***_environ)
 {
 	char *input_str;
 	char **arg, *cmd;
 	/*int count = 0;*/
 	pid_t child_pid;
 	int status;
+	
 	while (1)
 	{
 		if (!(isatty(STDIN_FILENO)))
@@ -50,14 +53,14 @@ void loop(void)
 		/* taking user input */
 		else
 			write(1, "UN!CORN-SHELL -> ", 18); /* to be changed later */
-		input_str = recieve_input(); /* getline in the hood */
-		printf("%s\n", input_str);
+		input_str = recieve_input(_environ); /* getline in the hood */
+		/*printf("%s\n", input_str);*/
 		arg = toker(input_str); /* tokonize the input */
 		if (arg[0] != NULL)
 		{
-			cmd = checkpoint(arg, input_str);
+			cmd = checkpoint(arg, input_str, _environ);
 			if (cmd == NULL) /*we couldn't find the path*/
-				perror(arg[0]); /* we have to pass variables */
+				perror("flag"); /* we have to pass variables */
 			if (cmd && (is_builin(cmd) != 0))
 			{
 				child_pid = fork();
@@ -67,7 +70,10 @@ void loop(void)
 					return;
 				}
 				if (child_pid == 0)
-					status = execute(arg, cmd);
+				{
+					printf("[%s]\n", cmd);
+					status = execute(arg, cmd, _environ);
+				}
 				else
 				{
 					wait(NULL);
@@ -81,20 +87,38 @@ void loop(void)
 			/* freeing memory */
 			free(input_str);
 			free(arg);
-			printf("I'm free\n");
+			/*printf("I'm free\n");*/
 		}
-		/*if (!(isatty(STDIN_FILENO)))
-			exit(0);*/
+		/*if (!(isatty(STDIN_FILENO)))*/
+			/*exit(0);*/
 	} /* edited the do while loop into one while loop */
 }
+
 /**
  * main - Entry point
+ * @ac: the arguments count
+ * av: the argument vector
+ * @env: the environment pointer
  *
  * Return: Nothing.
  */
 
-int main(void)
+int main(int ac __attribute__((unused)),
+		char **av __attribute__((unused)), char **env)
 {
-	loop();
+	char **_environ;
+	int i, count = 0;
+
+	while (env[count] != NULL)
+		count++;
+	_environ = malloc((count + 1) * sizeof(char*));
+	for (i = 0; env[i] != NULL; i++)
+	{
+		_environ[i] = _strdup(env[i]);
+		if (_environ[i] == NULL)
+			return (-1);
+	}
+	_environ[i] = NULL;
+	loop(&_environ);
 	return (0);
 }

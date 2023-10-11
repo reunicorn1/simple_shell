@@ -6,32 +6,34 @@
 
 /**
  * _env - prints the environment
+ * @_environ: a pointer to an array of environment variables
  *
  * Return: Nothing.
  */
 
-void _env(void)
+void _env(char ***_environ)
 {
 	int i;
 
-	for (i = 0; environ[i] != NULL; i++)
+	for (i = 0; (*_environ)[i] != NULL; i++)
 	{
-		_printf("%s\n", environ[i]);
+		_printf("%s\n", (*_environ)[i]);
 	}
 }
 
 /**
  * _setenv - Initialize a new environ, or modify an existing one
  * @arg: a pointer to an array of pointers
+ * @_environ: a pointer to the array of environment variables
  *
  * Return: return zero on success, or -1 on error
  */
 
-int _setenv(char **arg)
+int _setenv(char **arg, char ***_environ)
 {
 	char *newenv;
 	int i, j;
-	static char **new_environ;
+	char **new_environ;
 
 	if (arg[1] == NULL || _strlen(arg[1]) == 0 || arg[1][0] == '=')
 	{
@@ -40,7 +42,7 @@ int _setenv(char **arg)
 		return (-1);
 	}
 	if (arg[2] == NULL)
-		return (_unsetenv(arg));
+		return (_unsetenv(arg, _environ));
 	newenv = malloc(sizeof(char) * (_strlen(arg[1]) + _strlen(arg[2]) + 2));
 	if (newenv == NULL)
 	{
@@ -51,21 +53,21 @@ int _setenv(char **arg)
 	_strcpy(newenv, arg[1]);
 	_strcat(newenv, "=");
 	_strcat(newenv, arg[2]);
-	for (i = 0; environ[i] != NULL; i++)
+	for (i = 0; (*_environ)[i] != NULL; i++)
 	{
-		if (_strncmp(environ[i], arg[1], _strlen(arg[1])) == 0)
+		if (_strncmp((*_environ)[i], arg[1], _strlen(arg[1])) == 0)
 		{
-			if (_strcmp(environ[i], newenv) == 0)
+			if (_strcmp((*_environ)[i], newenv) == 0)
 			{
 				free(newenv);
 				return (0);
 			}
-			environ[i] = newenv;
+			free(*_environ[i]);
+			(*_environ)[i] = newenv;
 			return (0);
 		}
 	}
-	new_environ = (char **)_realloc(new_environ,
-			sizeof(new_environ), sizeof(char *) * (i + 2));
+	new_environ = (char **)malloc(sizeof(char *) * (i + 1));
 	if (new_environ == NULL)
 	{
 		errno = ENOMEM;
@@ -73,20 +75,23 @@ int _setenv(char **arg)
 		return (-1);
 	}
 	for (j = 0; j < i; j++)
-		new_environ[j] = environ[j];
+		new_environ[j] = (*_environ)[j];
 	new_environ[i] = newenv;
 	new_environ[i + 1] = NULL;
-	environ = new_environ;
+	free(*_environ);
+	*_environ = new_environ;
 	return (0);
 }
+
 /**
  * _unsetenv - Remove an environment variable
  * @arg: a pointer to an array of pointers
+ * @_environ: a pointer of an array of environment variables
  *
  * Return: zero on success, or -1 on error,
  */
 
-int _unsetenv(char **arg)
+int _unsetenv(char **arg, char ***_environ)
 {
 	int n, m;
 
@@ -96,12 +101,12 @@ int _unsetenv(char **arg)
 		perror("");
 		return (-1);
 	}
-	for (n = 0; environ[n] != NULL; n++)
+	for (n = 0; (*_environ)[n] != NULL; n++)
 	{
-		if (_strncmp(environ[n], arg[1], _strlen(arg[1])) == 0)
+		if (_strncmp((*_environ)[n], arg[1], _strlen(arg[1])) == 0)
 		{
-			for (m = n + 1; environ[n] != NULL; n++, m++)
-				environ[n] = environ[m];
+			for (m = n + 1; (*_environ)[n] != NULL; n++, m++)
+				(*_environ)[n] = (*_environ)[m];
 			return (0);
 		}
 	}
