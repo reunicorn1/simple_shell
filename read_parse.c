@@ -50,18 +50,18 @@ char **toker(char *str)
 	int i = 0;
 	char **arr = malloc(sizeof(*arr) * 10);
 	
-	printf("%s\n", str);
+	// printf("%s\n", str);
 	while (1)
 	{
 		if (i == 0)
 		{
-			arr[i] = _strtok(str, " \t");
-			printf("[%s], i = %d\n", arr[i], i);
+			arr[i] = strtok(str, " \t");
+			// printf("[%s], i = %d\n", arr[i], i);
 		}
 		else
 		{
-			arr[i] = _strtok(NULL, " \t");
-			printf("[%s], i = %d\n", arr[i], i);
+			arr[i] = strtok(NULL, " \t");
+			// printf("[%s], i = %d\n", arr[i], i);
 		}
 		if (arr[i] == NULL)
 			break;

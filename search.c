@@ -18,17 +18,18 @@
 
 char *checkpoint(char **arg, char *string, char ***_environ)
 {
-	char *cmd, *code = "1";
+	char *cmd;
+	int err_code = 1;
 
 	/* wildcard globing can occur here through a called function */
 	if (_strcmp(arg[0], "exit") == 0)
 	{
 		if (arg[1] != NULL)
-			code = arg[1];
+			err_code = _atoi(arg[1]);
 		free(string);
 		free(arg);
 		free_grid(*_environ);
-		exit(atoi(code));
+		exit(err_code);
 	}
 	if (_strcmp(arg[0], "env") == 0)
 	{
@@ -51,7 +52,7 @@ char *checkpoint(char **arg, char *string, char ***_environ)
 		return (arg[0]);
 	}
 	/* compare with other built in functions in the future here */
-	if (arg[0][0] == '/')
+	if (arg[0][0] == '/' || arg[0][0] == '.')
 		return (arg[0]);
 
 	cmd = _which(arg[0]);

@@ -71,7 +71,7 @@ void loop(char ***_environ)
 				}
 				if (child_pid == 0)
 				{
-					printf("[%s]\n", cmd);
+					// printf("[%s]\n", cmd);
 					status = execute(arg, cmd, _environ);
 				}
 				else
