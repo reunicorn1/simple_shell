@@ -30,6 +30,7 @@ char *checkpoint(char **arg, char *string, char ***_environ);
 char *_which(char *arg);
 int is_builin(char *cmd);
 int is_input_eof(void);
+char **cmd_list(char **array);
 
 /*our own version of functions*/
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);

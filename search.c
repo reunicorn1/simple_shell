@@ -125,3 +125,53 @@ int is_builin(char *cmd)
 	else
 		return (-1);
 }
+
+/**
+ * cmd_list - send the array of commands to be executed
+ * @array: is the raw array of tokens produced from input
+ *
+ * Return: the array only containing a one command with its arguments
+ */
+char **cmd_list(char **array)
+{
+	static char **next_ptr, **org;
+	char **temp = NULL; /*a savepoint of where the cmd should start*/
+	int i, flag = 0; /*flag means that semicolon found*/
+
+	if (array != org) /*a new input*/
+	{
+		if (strcmp(array[0], ";") == 0) /*checking if correct syntax*/
+		{
+			perror("syntax error near unexpected token `;'");
+			return (NULL);
+		}
+		next_ptr = array;
+		org = array;
+		temp = array;
+	}
+	else
+	{
+		if (*next_ptr == NULL)  /*no next command to be passed*/
+        {
+            org = NULL;
+            return (NULL);
+        }
+		temp = next_ptr; /*preparing the next command*/
+	}
+	for (i = 0; next_ptr[i] != NULL; i++)
+	{
+		if (strcmp(next_ptr[i], ";") == 0)
+		{
+			flag = 1;
+			break;
+		}
+	}
+	if (flag) /*semicolon found!*/
+	{
+		next_ptr[i] = NULL;
+		next_ptr = &next_ptr[i + 1];
+		return (temp); /*returning a token, ready for the next*/
+	}
+	next_ptr = &next_ptr[i]; /*which will alway equal NULL*/
+	return (temp); /*no future tokens guranteed*/
+}

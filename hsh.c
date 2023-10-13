@@ -37,7 +37,7 @@ int execute(char **arg, char *cmd, char ***_environ)
 void loop(char ***_environ)
 {
 	char *input_str;
-	char **arg, *cmd;
+	char **arg, **cmd_array, *cmd;
 	/*int count = 0;*/
 	pid_t child_pid;
 	int status;
@@ -58,39 +58,39 @@ void loop(char ***_environ)
 		arg = toker(input_str); /* tokonize the input */
 		if (arg[0] != NULL)
 		{
-			cmd = checkpoint(arg, input_str, _environ);
-			if (cmd == NULL) /*we couldn't find the path*/
-				perror("flag"); /* we have to pass variables */
-			if (cmd && (is_builin(cmd) != 0))
+			cmd_array = cmd_list(arg);
+			while (cmd_array)
 			{
-				child_pid = fork();
-				if (child_pid == -1)
+				cmd = checkpoint(cmd_array, input_str, _environ);
+				if (cmd == NULL) /*we couldn't find the path*/
+					perror("flag"); /* we have to pass variables */
+				if (cmd && (is_builin(cmd) != 0))
 				{
-					perror("Error: fork failed\n");
-					return;
+					child_pid = fork();
+					if (child_pid == -1)
+					{
+						perror("Error: fork failed\n");
+						return;
+					}
+					if (child_pid == 0)
+						status = execute(cmd_array, cmd, _environ);
+					else
+					{
+						wait(NULL);
+						if (cmd_array[0][0] != '/')
+							free(cmd);
+					}
 				}
-				if (child_pid == 0)
-				{
-					// printf("[%s]\n", cmd);
-					status = execute(arg, cmd, _environ);
-				}
-				else
-				{
-					wait(NULL);
-					if (arg[0][0] != '/')
-						free(cmd);
-				}
+				cmd_array = cmd_list(arg);
 			}
 		}
-		if (status != -1)
+		if (status != -1) /*return here to review this condition*/
 		{
 			/* freeing memory */
 			free(input_str);
 			free(arg);
 			/*printf("I'm free\n");*/
 		}
-		/*if (!(isatty(STDIN_FILENO)))*/
-			/*exit(0);*/
 	} /* edited the do while loop into one while loop */
 }
 

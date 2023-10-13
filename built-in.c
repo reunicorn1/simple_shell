@@ -62,7 +62,7 @@ int _setenv(char **arg, char ***_environ)
 				free(newenv);
 				return (0);
 			}
-			free(*_environ[i]);
+			free((*_environ)[i]);
 			(*_environ)[i] = newenv;
 			return (0);
 		}
