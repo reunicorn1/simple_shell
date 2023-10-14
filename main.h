@@ -26,11 +26,12 @@ int execute(char **arg, char *cmd, char ***_environ);
 void loop(char ***_environ);
 char *recieve_input(char ***_environ);
 char **toker(char *str);
-char *checkpoint(char **arg, char *string, char ***_environ);
+char *checkpoint(char **arg, char *string, char ***_environ, int count);
 char *_which(char *arg);
 int is_builin(char *cmd);
 int is_input_eof(void);
 char **cmd_list(char **array);
+int error_stat(int code);
 
 /*our own version of functions*/
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
@@ -51,11 +52,19 @@ int _printf(const char *format, ...);
 int _atoi(char *s);
 int _strncmp(char *s1, char *s2, size_t n);
 
+/* printing error functions*/
+int _putchar2(char c);
+int recursive_int2(int n);
+int _printfint2(va_list args);
+int _printfstring2(va_list args);
+int _printferror(const char *format, ...);
+
 /*built-in functions*/
 void _env(char ***_environ);
 int _setenv(char **arg, char ***_environ);
 int _unsetenv(char **arg, char ***_environ);
 int _cd(char *path);
+int exiting(char *arg, int count);
 
 void free_grid(char **grid);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);

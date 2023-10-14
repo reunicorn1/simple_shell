@@ -12,20 +12,22 @@
  * checkpoint - reads the array of strings and process it accordingly
  * @arg: is the array of pointers composing the tokens
  * @string: contains the raw user input
+ * @_environ: the environment pointer for this program
+ * @count: the number of argument which are processed until now
  *
  * Return: a char which is somehow the path if required
  */
 
-char *checkpoint(char **arg, char *string, char ***_environ)
+char *checkpoint(char **arg, char *string, char ***_environ, int count)
 {
 	char *cmd;
-	int err_code = 1;
+	int err_code = error_stat(-16);;
 
 	/* wildcard globing can occur here through a called function */
 	if (_strcmp(arg[0], "exit") == 0)
 	{
 		if (arg[1] != NULL)
-			err_code = _atoi(arg[1]);
+			err_code = exiting(arg[1], count);
 		free(string);
 		free(arg);
 		free_grid(*_environ);
@@ -74,19 +76,11 @@ char *_which(char *arg)
 
 	fullpath = malloc(1024);
 	if (fullpath == NULL)
-	{
-		errno = ENOMEM;
-		perror("");
 		return (NULL);
-	}
 	variableValue = getenv(variableName);
 	pathcopy = _strdup(variableValue);
 	if (pathcopy == NULL)
-	{
-		errno = ENOMEM;
-		perror("");
 		return (NULL);
-	}
 	token = strtok(pathcopy, ":");
 	while (token != NULL)
 	{
@@ -152,10 +146,10 @@ char **cmd_list(char **array)
 	else
 	{
 		if (*next_ptr == NULL)  /*no next command to be passed*/
-        {
-            org = NULL;
-            return (NULL);
-        }
+		{
+			org = NULL;
+			return (NULL);
+		}
 		temp = next_ptr; /*preparing the next command*/
 	}
 	for (i = 0; next_ptr[i] != NULL; i++)

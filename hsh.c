@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -38,32 +39,35 @@ void loop(char ***_environ)
 {
 	char *input_str;
 	char **arg, **cmd_array, *cmd;
-	/*int count = 0;*/
+	int stat, count = 0;
 	pid_t child_pid;
-	int status;
-	
+	int status, error = 0;
+
 	while (1)
 	{
+		error_stat(error);
 		if (!(isatty(STDIN_FILENO)))
 		{
 			if (is_input_eof())
-				exit(0);
+				exit(error);
 		}
-		/*count++;  to keep track of number of loops*/
 		/* taking user input */
 		else
 			write(1, "UN!CORN-SHELL -> ", 18); /* to be changed later */
+		count++;  /*to keep track of number of loops*/
 		input_str = recieve_input(_environ); /* getline in the hood */
-		/*printf("%s\n", input_str);*/
 		arg = toker(input_str); /* tokonize the input */
 		if (arg[0] != NULL)
 		{
 			cmd_array = cmd_list(arg);
 			while (cmd_array)
 			{
-				cmd = checkpoint(cmd_array, input_str, _environ);
+				cmd = checkpoint(cmd_array, input_str, _environ, count);
 				if (cmd == NULL) /*we couldn't find the path*/
-					perror("flag"); /* we have to pass variables */
+				{
+					error = 127;
+					fprintf(stderr, "./hsh: %d: %s: not found\n", count, cmd_array[0]);
+				}
 				if (cmd && (is_builin(cmd) != 0))
 				{
 					child_pid = fork();
@@ -76,8 +80,9 @@ void loop(char ***_environ)
 						status = execute(cmd_array, cmd, _environ);
 					else
 					{
-						wait(NULL);
-						if (cmd_array[0][0] != '/')
+						waitpid(child_pid, &stat, 0);
+						error = WEXITSTATUS(stat);
+						if (!(cmd_array[0][0] == '/' || cmd_array[0][0] == '.'))
 							free(cmd);
 					}
 				}
@@ -89,7 +94,6 @@ void loop(char ***_environ)
 			/* freeing memory */
 			free(input_str);
 			free(arg);
-			/*printf("I'm free\n");*/
 		}
 	} /* edited the do while loop into one while loop */
 }
@@ -97,7 +101,7 @@ void loop(char ***_environ)
 /**
  * main - Entry point
  * @ac: the arguments count
- * av: the argument vector
+ * @av: the argument vector
  * @env: the environment pointer
  *
  * Return: Nothing.
@@ -111,7 +115,7 @@ int main(int ac __attribute__((unused)),
 
 	while (env[count] != NULL)
 		count++;
-	_environ = malloc((count + 1) * sizeof(char*));
+	_environ = malloc((count + 1) * sizeof(char *));
 	for (i = 0; env[i] != NULL; i++)
 	{
 		_environ[i] = _strdup(env[i]);

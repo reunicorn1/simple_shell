@@ -42,9 +42,10 @@ int _atoi(char *s)
 }
 
 /**
- * _strcmp -  compares two strings
+ * _strncmp -  compares two strings
  * @s1: is a variable of string type
  * @s2: is a variable of string type
+ * @n: the number of letters to be comapred
  *
  * Description: this function compares two strings
  * Return: 0 if equal, +ve if s1 is larger, -ve if s1 is smaller
@@ -52,7 +53,7 @@ int _atoi(char *s)
 
 int _strncmp(char *s1, char *s2, size_t n)
 {
-size_t i;
+	size_t i;
 
 	if (s1 == NULL && s2 == NULL)
 		return (0);

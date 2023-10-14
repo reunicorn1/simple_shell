@@ -112,3 +112,26 @@ int _unsetenv(char **arg, char ***_environ)
 	}
 	return (0);
 }
+
+/**
+ * exiting - process arguments for exiting
+ * @arg: the argument which determines the status code
+ * @count: the number of arguments until now
+ *
+ * Return: the status code to exit
+ */
+
+int exiting(char *arg, int count)
+{
+	int i;
+
+	for (i = 0; i < (int)_strlen(arg); i++)
+	{
+		if (!(arg[i] > 47 && arg[i] < 58))
+		{
+			fprintf(stderr, "./hsh: %d: exit: Illegal number: %s\n", count, arg);
+			return (2);
+		}
+	}
+	return (_atoi(arg));
+}

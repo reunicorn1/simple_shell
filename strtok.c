@@ -51,15 +51,12 @@ char *_strtok(char *str, char *dlm)
 	temp = ptr;
 	if (*ptr == '\0')
 		return (NULL);
-	else
-	{
-		/**
-		 * add the null terminator at the end of the token
-		 * and move the pointer to the beginning of the next
-		 * token
-		 */
-		ptr[i] = '\0';
-		ptr += i + 1;
-	}
+	/**
+	 * add the null terminator at the end of the token
+	 * and move the pointer to the beginning of the next
+	 * token
+	 */
+	ptr[i] = '\0';
+	ptr += i + 1;
 	return (temp);
 }
