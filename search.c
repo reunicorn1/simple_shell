@@ -54,7 +54,7 @@ char *checkpoint(char **arg, char *string, char ***_environ, int count)
 	{
 		error_stat(_alias(arg, 0));
 		return (arg[0]);
-	} /* betty has an issue with number of lines */
+	}
 	/*if (arg[0][0] == '/' || arg[0][0] == '.')*/
 		/*return (arg[0]);*/
 	cmd = _which(arg[0]);
