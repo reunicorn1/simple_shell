@@ -100,7 +100,12 @@ void loop(char ***_environ, char **prog_name)
 	while (1)
 	{
 		error_stat(error);
-		if (isatty(STDIN_FILENO))
+		if (!(isatty(STDIN_FILENO)))
+		{
+			if (is_input_eof())
+				exit(error);
+		}
+		else
 			write(1, "($) ", 4); /* to be changed later */
 		count++;  /*to keep track of number of loops*/
 		input_str = recieve_input(_environ); /* getline in the hood */
