@@ -144,8 +144,11 @@ int alias_cont(char **arg, char ***name, char ***value, int mode)
 {
 	if (arg == NULL)
 	{
-		free_grid(*name);
-		free_grid(*value);
+		if (name && value)
+		{
+			free_grid(*name);
+			free_grid(*value);
+		}
 		return (0);
 	}
 	if (mode == 1)

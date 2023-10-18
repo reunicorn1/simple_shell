@@ -13,16 +13,15 @@
  * execute - execute the program required
  * @arg: the array of pointers which are the tokens
  * @cmd: the pathname
- * @_environ: a pointer of the array of environment variables
  *
  * Return: -1 in failure only
  */
 
-int execute(char **arg, char *cmd, char ***_environ)
+int execute(char **arg, char *cmd)
 {
 	int stat;
 
-	stat = execve(cmd, arg, *_environ);
+	stat = execve(cmd, arg, environ);
 	if (stat == -1)
 		perror("Error: execution failed\n");
 	return (stat);
@@ -32,7 +31,6 @@ int execute(char **arg, char *cmd, char ***_environ)
  * comand_runner - check for built in functions and execute commands
  * @arg: is the array of pointers composing the tokens
  * @input_string: contains the raw user input
- * @_environ: the environment pointer for this program
  * @count: the number of argument which are processed until now
  * @error: pointer to the error code passed by loop
  * @prog_name: a name by which the shell is run
@@ -41,19 +39,21 @@ int execute(char **arg, char *cmd, char ***_environ)
  */
 
 int command_runner(char **arg, char *input_string,
-		char ***_environ, int count, int *error, char **prog_name)
+		int count, int *error, char **prog_name)
 {
-	char **cmd_array, *cmd;
-	pid_t child_pid;
-	int status, stat;
+	char **cmd_array = NULL, *cmd = NULL;
+	pid_t child_pid = 0;
+	int status = 0, stat = 0;
 
 	cmd_array = cmd_list(arg);
 	while (cmd_array)
 	{
-		cmd = checkpoint(cmd_array, input_string, _environ, count);
+		cmd = checkpoint(cmd_array, input_string, count);
 		if (cmd == NULL) /*we couldn't find the path*/
 		{
 			*error = 127;
+			/*fprintf(stderr, "%s: ", *prog_name);*/
+			/*perror("");*/
 			fprintf(stderr, "%s: %d: %s: not found\n",
 					*prog_name, count, cmd_array[0]);
 		}
@@ -66,7 +66,7 @@ int command_runner(char **arg, char *input_string,
 				return (-1);
 			}
 			if (child_pid == 0)
-			status = execute(cmd_array, cmd, _environ);
+			status = execute(cmd_array, cmd);
 			else
 			{
 				waitpid(child_pid, &stat, 0);
@@ -82,18 +82,17 @@ int command_runner(char **arg, char *input_string,
 
 /**
  * loop - the real engine beind how simple shell work
- * @_environ: a pointer of the array of environment variables
  * @prog_name: the name by which the program is run
  *
  * Return: Nothing.
  */
 
-void loop(char ***_environ, char **prog_name)
+void loop(char **prog_name)
 {
 	char *input_str;
 	char **arg;
 	int count = 0;
-	int status, error = 0;
+	int status = 0, error = 0;
 
 	while (1)
 	{
@@ -106,11 +105,11 @@ void loop(char ***_environ, char **prog_name)
 		else
 			write(1, "($) ", 4); /* to be changed later */
 		count++;  /*to keep track of number of loops*/
-		input_str = recieve_input(_environ); /* getline in the hood */
+		input_str = recieve_input(); /* getline in the hood */
 		arg = toker(input_str); /* tokonize the input */
 		if (arg[0] != NULL)
 		{
-			status = command_runner(arg, input_str, _environ, count, &error, prog_name);
+			status = command_runner(arg, input_str, count, &error, prog_name);
 		}
 		if (status != -1) /*return here to review this condition*/
 		{
@@ -125,26 +124,12 @@ void loop(char ***_environ, char **prog_name)
  * main - Entry point
  * @ac: the arguments count
  * @av: the argument vector
- * @env: the environment pointer
  *
  * Return: Nothing.
  */
 
-int main(int ac __attribute__((unused)), char **av, char **env)
+int main(int ac __attribute__((unused)), char **av)
 {
-	char **_environ;
-	int i, count = 0;
-
-	while (env[count] != NULL)
-		count++;
-	_environ = malloc((count + 1) * sizeof(char *));
-	for (i = 0; env[i] != NULL; i++)
-	{
-		_environ[i] = _strdup(env[i]);
-		if (_environ[i] == NULL)
-			return (-1);
-	}
-	_environ[i] = NULL;
-	loop(&_environ, &av[0]);
+	loop(&av[0]);
 	return (0);
 }

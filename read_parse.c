@@ -26,12 +26,11 @@ int error_stat(int code)
 
 /**
  * recieve_input - recieves input from the user
- * @_environ: a pointer to an array of environment variables
  *
  * Return: a string full on input
  */
 
-char *recieve_input(char ***_environ)
+char *recieve_input(void)
 {
 	size_t len = 1024;
 	char *str = malloc(1024);
@@ -46,13 +45,13 @@ char *recieve_input(char ***_environ)
 	if (input_len == -1) /*basically EOF*/
 	{
 		write(1, "\n", 1);
-		_alias(NULL, 0);
+		/*_alias(NULL, 0);*/
 		free(str);
-		free_grid(*_environ);
+		/*free_grid(*_environ);*/
 		exit(error_stat(-16));
 	}
 	str[input_len - 1] = '\0';
-	_alias(&str, 1);
+	/*_alias(&str, 1);*/
 	return (str);
 }
 

@@ -49,13 +49,13 @@ typedef struct alias_list
 	char *value;
 } alias_list;
 
-int execute(char **arg, char *cmd, char ***_environ);
-void loop(char ***_environ, char **prog_name);
-char *recieve_input(char ***_environ);
+int execute(char **arg, char *cmd);
+void loop(char **prog_name);
+char *recieve_input(void);
 char **toker(char *str);
 int command_runner(char **arg, char *input_string,
-		char ***_environ, int count, int *error, char **prog_name);
-char *checkpoint(char **arg, char *string, char ***_environ, int count);
+		int count, int *error, char **prog_name);
+char *checkpoint(char **arg, char *string, int count);
 char *_which(char *arg);
 int is_builin(char *cmd);
 int is_input_eof(void);
@@ -90,7 +90,7 @@ int _printfstring2(va_list args);
 int _printferror(const char *format, ...);
 
 /*built-in functions*/
-int _env(char ***_environ);
+int _env(void);
 int _setenv(char **arg, char ***_environ);
 int env_manipulation(char *newenv, char ***_environ, int i);
 int _unsetenv(char **arg, char ***_environ);

@@ -12,13 +12,12 @@
  * checkpoint - reads the array of strings and process it accordingly
  * @arg: is the array of pointers composing the tokens
  * @string: contains the raw user input
- * @_environ: the environment pointer for this program
  * @count: the number of argument which are processed until now
  *
  * Return: a char which is somehow the path if required
  */
 
-char *checkpoint(char **arg, char *string, char ***_environ, int count)
+char *checkpoint(char **arg, char *string, int count)
 {
 	char *cmd;
 	int err_code = error_stat(-16);
@@ -27,24 +26,24 @@ char *checkpoint(char **arg, char *string, char ***_environ, int count)
 	{
 		if (arg[1] != NULL)
 			err_code = exiting(arg[1], count);
-		_alias(NULL, 0);
-		free(string), free(arg), free_grid(*_environ), exit(err_code);
+		/*_alias(NULL, 0);*/
+		free(string), free(arg), exit(err_code);
 	}
 	if (_strcmp(arg[0], "env") == 0)
 	{
-		error_stat(_env(_environ));
+		error_stat(_env());
 		return (arg[0]);
 	}
-	if (_strcmp(arg[0], "setenv") == 0)
-	{
-		error_stat(_setenv(arg, _environ));
-		return (arg[0]);
-	}
-	if (_strcmp(arg[0], "unsetenv") == 0)
-	{
-		error_stat(_unsetenv(arg, _environ));
-		return (arg[0]);
-	}
+	/*if (_strcmp(arg[0], "setenv") == 0)*/
+	/*{*/
+		/*error_stat(_setenv(arg));*/
+		/*return (arg[0]);*/
+	/*}*/
+	/*if (_strcmp(arg[0], "unsetenv") == 0)*/
+	/*{*/
+		/*error_stat(_unsetenv(arg));*/
+		/*return (arg[0]);*/
+	/*}*/
 	if (_strcmp(arg[0], "cd") == 0)
 	{
 		error_stat(_cd(arg[1]));
@@ -54,7 +53,7 @@ char *checkpoint(char **arg, char *string, char ***_environ, int count)
 	{
 		error_stat(_alias(arg, 0));
 		return (arg[0]);
-	}
+	} /* betty has an issue with number of lines */
 	/*if (arg[0][0] == '/' || arg[0][0] == '.')*/
 		/*return (arg[0]);*/
 	cmd = _which(arg[0]);
@@ -71,8 +70,8 @@ char *_which(char *arg)
 {
 	const char *variableName = "PATH";
 	char *variableValue;
-	char *fullpath;
-	char *pathcopy, *token;
+	char *fullpath = NULL;
+	char *pathcopy = NULL, *token;
 
 	if (!(arg[0] == '/' || arg[0] == '.'))
 	{
@@ -86,9 +85,9 @@ char *_which(char *arg)
 		token = strtok(pathcopy, ":");
 		while (token != NULL)
 		{
-			_strcpy(fullpath, token);
-			_strcat(fullpath, "/");
-			_strcat(fullpath, arg);
+			fullpath = _strcpy(fullpath, token);
+			fullpath = _strcat(fullpath, "/");
+			fullpath = _strcat(fullpath, arg);
 			if (access(fullpath, X_OK) == 0)
 			{
 				free(pathcopy);
