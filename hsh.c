@@ -43,45 +43,42 @@ int execute(char **arg, char *cmd, char ***_environ)
 int command_runner(char **arg, char *input_string,
 		char ***_environ, int count, int *error, char **prog_name)
 {
-char **cmd_array, *cmd;
+	char **cmd_array, *cmd;
+	pid_t child_pid;
+	int status, stat;
 
-pid_t child_pid;
-int status, stat;
-
-cmd_array = cmd_list(arg);
-		while (cmd_array)
+	cmd_array = cmd_list(arg);
+	while (cmd_array)
+	{
+		cmd = checkpoint(cmd_array, input_string, _environ, count);
+		if (cmd == NULL) /*we couldn't find the path*/
 		{
-			cmd = checkpoint(cmd_array, input_string, _environ, count);
-			if (cmd == NULL) /*we couldn't find the path*/
-			{
-				*error = 127;
-				fprintf(stderr, "%s: %d: %s: not found\n",
-						*prog_name, count, cmd_array[0]);
-			}
-			if (cmd && (is_builin(cmd) != 0))
-			{
-				child_pid = fork();
-				if (child_pid == -1)
-				{
-					perror("Error: fork failed\n");
-					return (-1);
-				}
-				if (child_pid == 0)
-				status = execute(cmd_array, cmd, _environ);
-				else
-				{
-					waitpid(child_pid, &stat, 0);
-					*error = WEXITSTATUS(stat);
-					if (!(cmd_array[0][0] == '/' || cmd_array[0][0] == '.'))
-						free(cmd);
-				}
-			}
-			cmd_array = cmd_list(arg);
+			*error = 127;
+			fprintf(stderr, "%s: %d: %s: not found\n",
+			*prog_name, count, cmd_array[0]);
 		}
-return (status);
+		if (cmd && (is_builin(cmd) != 0))
+		{
+			child_pid = fork();
+			if (child_pid == -1)
+			{
+				perror("Error: fork failed\n");
+				return (-1);
+			}
+			if (child_pid == 0)
+			status = execute(cmd_array, cmd, _environ);
+			else
+			{
+				waitpid(child_pid, &stat, 0);
+				*error = WEXITSTATUS(stat);
+				if (!(cmd_array[0][0] == '/' || cmd_array[0][0] == '.'))
+					free(cmd);
+			}
+		}
+		cmd_array = cmd_list(arg);
+	}
+	return (status);
 }
-
-
 
 /**
  * loop - the real engine beind how simple shell work

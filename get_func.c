@@ -8,7 +8,6 @@ func_ptr get_format(char c)
 	{"d", d_hand},
 	{"c", c_hand},
 	{"s", s_hand},
-	{"%", percent_hand},
 	{"i", i_hand},
 	{NULL, NULL}
 	};

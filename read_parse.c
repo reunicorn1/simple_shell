@@ -42,10 +42,10 @@ char *recieve_input(char ***_environ)
 		perror("Error: couldn't allocate memory\n");
 		return (NULL);
 	}
-	input_len = _getline(&str, &len, stdin);
+	input_len = getline(&str, &len, stdin);
 	if (input_len == -1) /*basically EOF*/
 	{
-		/*write(1, "\n", 1);*/
+		write(1, "\n", 1);
 		_alias(NULL, 0);
 		free(str);
 		free_grid(*_environ);
@@ -73,11 +73,11 @@ char **toker(char *str)
 	{
 		if (i == 0)
 		{
-			arr[i] = _strtok(str, " \t");
+			arr[i] = strtok(str, " \t");
 		}
 		else
 		{
-			arr[i] = _strtok(NULL, " \t");
+			arr[i] = strtok(NULL, " \t");
 		}
 		if (arr[i] == NULL)
 			break;

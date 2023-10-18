@@ -34,7 +34,7 @@ typedef struct print_fun
 typedef struct format_handler
 {
 	char *spec;
-	int (*f)();
+	int (*f)(va_list *);
 } f_handler;
 
 /**

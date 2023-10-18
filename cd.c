@@ -1,5 +1,6 @@
 #include "main.h"
 #include <unistd.h>
+
 /**
  * _cd - change the current directory
  * @path: path to the new directory
@@ -65,7 +66,7 @@ void print_pwd(void)
 		return;
 	}
 	if (child_pid == 0)
-		execve("/bin/pwd", arr, __environ);
+		execve("/bin/pwd", arr, environ);
 	else
 	{
 		wait(NULL);
