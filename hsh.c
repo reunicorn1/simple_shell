@@ -54,8 +54,6 @@ int command_runner(char **arg, char *input_string,
 		if (cmd == NULL) /*we couldn't find the path*/
 		{
 			*error = 127;
-			/*fprintf(stderr, "%s: ", *prog_name);*/
-			/*perror("");*/
 			fprintf(stderr, "%s: %d: %s: not found\n",
 					*prog_name, count, cmd_array[0]);
 		}
