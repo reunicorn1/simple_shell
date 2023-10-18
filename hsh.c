@@ -104,7 +104,7 @@ void loop(char ***_environ, char **prog_name)
 				exit(error);
 		}
 		else
-			write(1, "($) ", 4); /* to be changed later */
+			write(1, "($) ", 5); /* to be changed later */
 		count++;  /*to keep track of number of loops*/
 		input_str = recieve_input(_environ); /* getline in the hood */
 		arg = toker(input_str); /* tokonize the input */
