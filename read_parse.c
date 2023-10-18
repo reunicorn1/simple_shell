@@ -93,7 +93,7 @@ char **toker(char *str)
   */
 
 
- int is_input_eof(void)
+int is_input_eof(void)
 {
 	int c;
 

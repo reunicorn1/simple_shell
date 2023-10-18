@@ -55,9 +55,8 @@ char *checkpoint(char **arg, char *string, char ***_environ, int count)
 		error_stat(_alias(arg, 0));
 		return (arg[0]);
 	} /* betty has an issue with number of lines */
-	if (arg[0][0] == '/' || arg[0][0] == '.')
-		return (arg[0]);
-
+	/*if (arg[0][0] == '/' || arg[0][0] == '.')*/
+		/*return (arg[0]);*/
 	cmd = _which(arg[0]);
 	return (cmd);
 }
@@ -75,29 +74,38 @@ char *_which(char *arg)
 	char *fullpath;
 	char *pathcopy, *token;
 
-	fullpath = malloc(1024);
-	if (fullpath == NULL)
-		return (NULL);
-	variableValue = getenv(variableName);
-	pathcopy = _strdup(variableValue);
-	if (pathcopy == NULL)
-		return (NULL);
-	token = strtok(pathcopy, ":");
-	while (token != NULL)
+	if (!(arg[0] == '/' || arg[0] == '.'))
 	{
-		_strcpy(fullpath, token);
-		_strcat(fullpath, "/");
-		_strcat(fullpath, arg);
-		if (access(fullpath, X_OK) == 0)
+		fullpath = malloc(1024);
+		if (fullpath == NULL)
+			return (NULL);
+		variableValue = getenv(variableName);
+		pathcopy = _strdup(variableValue);
+		if (pathcopy == NULL)
+			return (NULL);
+		token = strtok(pathcopy, ":");
+		while (token != NULL)
 		{
-			free(pathcopy);
-			return (fullpath);
+			_strcpy(fullpath, token);
+			_strcat(fullpath, "/");
+			_strcat(fullpath, arg);
+			if (access(fullpath, X_OK) == 0)
+			{
+				free(pathcopy);
+				return (fullpath);
+			}
+			token = strtok(NULL, ":");
 		}
-		token = strtok(NULL, ":");
+		free(fullpath);
+		free(pathcopy);
+		return (NULL);
 	}
-	free(fullpath);
-	free(pathcopy);
-	return (NULL);
+	else
+	{
+		if (access(arg, X_OK) == 0)
+			return (arg);
+		return (NULL);
+	}
 }
 
 /**
