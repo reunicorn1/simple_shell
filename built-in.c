@@ -6,18 +6,17 @@
 
 /**
  * _env - prints the environment
- * @_environ: a pointer to an array of environment variables
  *
  * Return: Nothing.
  */
 
-int _env(char ***_environ)
+int _env(void)
 {
 	int i;
 
-	for (i = 0; (*_environ)[i] != NULL; i++)
+	for (i = 0; environ[i] != NULL; i++)
 	{
-		_printf("%s\n", (*_environ)[i]);
+		_printf("%s\n", environ[i]);
 	}
 	return (0);
 }
