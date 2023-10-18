@@ -45,7 +45,8 @@ char *recieve_input(char ***_environ)
 	input_len = getline(&str, &len, stdin);
 	if (input_len == -1) /*basically EOF*/
 	{
-		write(1, "\n", 1);
+		if (isatty(STDIN_FILENO))
+			write(1, "\n", 1);
 		_alias(NULL, 0);
 		free(str);
 		free_grid(*_environ);
