@@ -8,10 +8,12 @@
  * @stream: a file to read from
  * Return: number of bytes read from stream
  */
+
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 {
 	int ch;
 	size_t  i = 0;
+
 
 	if (*lineptr == NULL || *n == 0)
 	{
@@ -26,6 +28,13 @@ ssize_t _getline(char **lineptr, size_t *n, FILE *stream)
 		i++;
 		if (ch == '\n')
 			break;
+		if (i == *n - 1)
+		{
+			*lineptr = realloc(*lineptr, sizeof(char) * (2 * *n));
+			if (*lineptr == NULL)
+				return (-1);
+			*n *= 2;
+		}
 	}
 	if (ch == EOF && i == 0)
 		return (-1);

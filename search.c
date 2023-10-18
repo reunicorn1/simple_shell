@@ -21,39 +21,40 @@
 char *checkpoint(char **arg, char *string, char ***_environ, int count)
 {
 	char *cmd;
-	int err_code = error_stat(-16);;
+	int err_code = error_stat(-16);
 
-	/* wildcard globing can occur here through a called function */
 	if (_strcmp(arg[0], "exit") == 0)
 	{
 		if (arg[1] != NULL)
 			err_code = exiting(arg[1], count);
-		free(string);
-		free(arg);
-		free_grid(*_environ);
-		exit(err_code);
+		_alias(NULL, 0);
+		free(string), free(arg), free_grid(*_environ), exit(err_code);
 	}
 	if (_strcmp(arg[0], "env") == 0)
 	{
-		_env(_environ);
+		error_stat(_env(_environ));
 		return (arg[0]);
 	}
 	if (_strcmp(arg[0], "setenv") == 0)
 	{
-		_setenv(arg, _environ);
+		error_stat(_setenv(arg, _environ));
 		return (arg[0]);
 	}
 	if (_strcmp(arg[0], "unsetenv") == 0)
 	{
-		_unsetenv(arg, _environ);
+		error_stat(_unsetenv(arg, _environ));
 		return (arg[0]);
 	}
 	if (_strcmp(arg[0], "cd") == 0)
 	{
-		_cd(arg[1]);
+		error_stat(_cd(arg[1]));
 		return (arg[0]);
 	}
-	/* compare with other built in functions in the future here */
+	if (_strcmp(arg[0], "alias") == 0)
+	{
+		error_stat(_alias(arg, 0));
+		return (arg[0]);
+	} /* betty has an issue with number of lines */
 	if (arg[0][0] == '/' || arg[0][0] == '.')
 		return (arg[0]);
 
@@ -116,25 +117,66 @@ int is_builin(char *cmd)
 		return (0);
 	else if (_strcmp(cmd, "cd") == 0)
 		return (0);
+	else if (_strcmp(cmd, "alias") == 0)
+		return (0);
 	else
 		return (-1);
 }
+/**
+ * semicolon_parser - prints a name as is
+ * @next_ptr: the moving piece across letters
+ *
+ * Return: Nothing.
+ */
 
+void semicolon_parser(char ***next_ptr)
+{
+	int i, j; /*flag means that semicolon found*/
+	static char *next_token;
+	/*char *next_token;*/
+
+	if (next_ptr == NULL)
+	{
+		next_token = NULL;
+		return;
+	}
+	if (next_token)
+		**next_ptr = next_token;
+	for (i = 0; (*next_ptr)[i] != NULL; i++)
+	{
+		if (_strcmp((*next_ptr)[i], ";") == 0) /*semicolon found!*/
+		{
+			(*next_ptr)[i] = NULL;
+			*next_ptr = &((*next_ptr)[i + 1]);
+			return; /*returning a token, ready for the next*/
+		}
+		for (j = 0; (*next_ptr)[i][j] != '\0'; j++)
+		{
+			if ((*next_ptr)[i][j] == ';')
+			{
+				(*next_ptr)[i][j] = '\0';
+				next_token = &((*next_ptr)[i][j + 1]);
+				return;
+			}
+		}
+	}
+	*next_ptr = &((*next_ptr)[i]);
+}
 /**
  * cmd_list - send the array of commands to be executed
  * @array: is the raw array of tokens produced from input
  *
  * Return: the array only containing a one command with its arguments
  */
+
 char **cmd_list(char **array)
 {
 	static char **next_ptr, **org;
 	char **temp = NULL; /*a savepoint of where the cmd should start*/
-	int i, flag = 0; /*flag means that semicolon found*/
 
 	if (array != org) /*a new input*/
 	{
-		if (strcmp(array[0], ";") == 0) /*checking if correct syntax*/
+		if (_strcmp(array[0], ";") == 0) /*checking if correct syntax*/
 		{
 			perror("syntax error near unexpected token `;'");
 			return (NULL);
@@ -148,24 +190,11 @@ char **cmd_list(char **array)
 		if (*next_ptr == NULL)  /*no next command to be passed*/
 		{
 			org = NULL;
+			semicolon_parser(NULL);
 			return (NULL);
 		}
 		temp = next_ptr; /*preparing the next command*/
 	}
-	for (i = 0; next_ptr[i] != NULL; i++)
-	{
-		if (strcmp(next_ptr[i], ";") == 0)
-		{
-			flag = 1;
-			break;
-		}
-	}
-	if (flag) /*semicolon found!*/
-	{
-		next_ptr[i] = NULL;
-		next_ptr = &next_ptr[i + 1];
-		return (temp); /*returning a token, ready for the next*/
-	}
-	next_ptr = &next_ptr[i]; /*which will alway equal NULL*/
-	return (temp); /*no future tokens guranteed*/
+	semicolon_parser(&next_ptr);
+	return (temp);
 }

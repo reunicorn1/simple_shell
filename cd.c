@@ -1,5 +1,4 @@
 #include "main.h"
-
 #include <unistd.h>
 /**
  * _cd - change the current directory
@@ -10,32 +9,65 @@
 
 int _cd(char *path)
 {
-	int i;
-	char *cwd = malloc(sizeof(char) * 512);
+	char *home = getenv("HOME");
+	char *oldpwd = getenv("PWD");
+	char *newpwd;
+	int i = 0;
 
-	if (cwd == NULL)
+	if (path == NULL)
 	{
-		return (-1);
+		newpwd = home;
 	}
-	i = chdir(path);
-	if (i == -1)
+	else if (_strcmp(path, "-") == 0)
 	{
-		perror("shell");
-		free(cwd);
-		return (-1);
-	}
-	if (getcwd(cwd, 512) == NULL)
-	{
-		/*printf("%s\n", cwd);*/
-		perror("getcwd failed:");
-		free(cwd);
-		return (-1);
+		if (oldpwd != NULL)
+		{
+			newpwd = oldpwd;
+			i = 1;
+		}
+		else
+		{
+			fprintf(stderr, "OLDPWD not set\n");
+			return (1);
+		}
 	}
 	else
 	{
-		setenv("PWD", cwd, 1);
-		/*printf("env is set\n");*/
+		newpwd = path;
 	}
-	free(cwd);
+	if (chdir(newpwd) == -1)
+	{
+		perror("chdir");
+		return (1);
+	}
+	setenv("PWD", newpwd, 1);
+	setenv("OLDPWD", oldpwd, 1);
+
+	if (i == 1)
+		print_pwd();
+
 	return (0);
+}
+/**
+ * print_pwd - run the pwd command
+ *
+ * Returns: nothing
+ */
+void print_pwd(void)
+{
+	pid_t child_pid;
+	char *arr[] = {NULL};
+
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		perror("Error: fork failed\n");
+		return;
+	}
+	if (child_pid == 0)
+		execve("/bin/pwd", arr, __environ);
+	else
+	{
+		wait(NULL);
+	}
 }

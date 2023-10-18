@@ -8,7 +8,6 @@
  * Description: this function returns the length of a string.
  * Return: return the length of a string
  */
-
 int _strlen(char *s)
 {
 	int i = 0;
@@ -19,6 +18,8 @@ int _strlen(char *s)
 	}
 	return (i);
 }
+
+
 /**
  * _strcmp -  compares two strings
  * @s1: is a variable of string type

@@ -43,15 +43,16 @@ char *recieve_input(char ***_environ)
 		return (NULL);
 	}
 	input_len = _getline(&str, &len, stdin);
-	/*printf("%d\n", input_len);*/
 	if (input_len == -1) /*basically EOF*/
 	{
-		write(1, "This is end of file\n", 20);
+		/*write(1, "\n", 1);*/
+		_alias(NULL, 0);
 		free(str);
 		free_grid(*_environ);
 		exit(error_stat(-16));
 	}
 	str[input_len - 1] = '\0';
+	_alias(&str, 1);
 	return (str);
 }
 
@@ -67,43 +68,20 @@ char **toker(char *str)
 	int i = 0;
 	char **arr = malloc(sizeof(*arr) * 10);
 
-	/*printf("%s\n", str);*/
+
 	while (1)
 	{
 		if (i == 0)
 		{
-			arr[i] = strtok(str, " \t");
-			/*printf("[%s], i = %d\n", arr[i], i);*/
+			arr[i] = _strtok(str, " \t");
 		}
 		else
 		{
-			arr[i] = strtok(NULL, " \t");
-			/*printf("[%s], i = %d\n", arr[i], i);*/
+			arr[i] = _strtok(NULL, " \t");
 		}
 		if (arr[i] == NULL)
 			break;
 		i++;
 	}
-	/*for (j = 0; j <= i; j++)*/
-		/*printf("[%s], i = %d\n", arr[i], j);*/
 	return (arr);
-}
-
-/**
- * is_input_eof - make sure if we reached eof in non interactive mode
- *
- * Return: Nothing.
- */
-
-int is_input_eof(void)
-{
-	int c;
-
-	c = fgetc(stdin);
-	if (c == -1)
-	{
-		return (1);
-	}
-	ungetc(c, stdin);
-	return (0);
 }

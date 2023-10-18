@@ -11,7 +11,7 @@
  * Return: Nothing.
  */
 
-void _env(char ***_environ)
+int _env(char ***_environ)
 {
 	int i;
 
@@ -19,6 +19,37 @@ void _env(char ***_environ)
 	{
 		_printf("%s\n", (*_environ)[i]);
 	}
+	return (0);
+}
+
+/**
+ * env_manipulation - manipulates the environ array
+ * @newenv: the new element to be added
+ * @_environ: a pointer to the array of environment variables
+ * @i: number of elements to be copied from _environ
+ *
+ * Return: success 0, or failure -1
+ */
+
+int env_manipulation(char *newenv, char ***_environ, int i)
+{
+	int j;
+	char **new_environ;
+
+	new_environ = (char **)malloc(sizeof(char *) * (i + 1));
+	if (new_environ == NULL)
+	{
+		errno = ENOMEM;
+		perror("");
+		return (-1);
+	}
+	for (j = 0; j < i; j++)
+		new_environ[j] = (*_environ)[j];
+	new_environ[i] = newenv;
+	new_environ[i + 1] = NULL;
+	free(*_environ);
+	*_environ = new_environ;
+	return (0);
 }
 
 /**
@@ -32,8 +63,7 @@ void _env(char ***_environ)
 int _setenv(char **arg, char ***_environ)
 {
 	char *newenv;
-	int i, j;
-	char **new_environ;
+	int i;
 
 	if (arg[1] == NULL || _strlen(arg[1]) == 0 || arg[1][0] == '=')
 	{
@@ -67,20 +97,7 @@ int _setenv(char **arg, char ***_environ)
 			return (0);
 		}
 	}
-	new_environ = (char **)malloc(sizeof(char *) * (i + 1));
-	if (new_environ == NULL)
-	{
-		errno = ENOMEM;
-		perror("");
-		return (-1);
-	}
-	for (j = 0; j < i; j++)
-		new_environ[j] = (*_environ)[j];
-	new_environ[i] = newenv;
-	new_environ[i + 1] = NULL;
-	free(*_environ);
-	*_environ = new_environ;
-	return (0);
+	return (env_manipulation(newenv, _environ, i));
 }
 
 /**
