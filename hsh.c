@@ -97,12 +97,7 @@ void loop(char **prog_name)
 	while (1)
 	{
 		error_stat(error);
-		if (!(isatty(STDIN_FILENO)))
-		{
-			if (is_input_eof())
-				exit(error);
-		}
-		else
+		if (isatty(STDIN_FILENO))
 			write(1, "($) ", 4); /* to be changed later */
 		count++;  /*to keep track of number of loops*/
 		input_str = recieve_input(); /* getline in the hood */
@@ -130,6 +125,20 @@ void loop(char **prog_name)
 
 int main(int ac __attribute__((unused)), char **av)
 {
+	char **env_cp = NULL;
+	int i, count = 0;
+
+	while (environ[count] != NULL)
+		count++;
+	env_cp = malloc((count + 1) * sizeof(char *));
+	for (i = 0; environ[i] != NULL; i++)
+	{
+		env_cp[i] = strdup(environ[i]);
+		if (env_cp[i] == NULL)
+			return (-1);
+	}
+	env_cp[i] = NULL;
+	environ = env_cp;
 	loop(&av[0]);
 	return (0);
 }

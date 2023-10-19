@@ -44,10 +44,11 @@ char *recieve_input(void)
 	input_len = getline(&str, &len, stdin);
 	if (input_len == -1) /*basically EOF*/
 	{
-		write(1, "\n", 1);
+		if (isatty(STDIN_FILENO))
+			write(1, "\n", 1);
 		/*_alias(NULL, 0);*/
 		free(str);
-		/*free_grid(*_environ);*/
+		free_grid(environ);
 		exit(error_stat(-16));
 	}
 	str[input_len - 1] = '\0';

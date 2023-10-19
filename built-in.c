@@ -24,18 +24,17 @@ int _env(void)
 /**
  * env_manipulation - manipulates the environ array
  * @newenv: the new element to be added
- * @_environ: a pointer to the array of environment variables
  * @i: number of elements to be copied from _environ
  *
  * Return: success 0, or failure -1
  */
 
-int env_manipulation(char *newenv, char ***_environ, int i)
+int env_manipulation(char *newenv, int i)
 {
 	int j;
-	char **new_environ;
+	char **new_environ = NULL;
 
-	new_environ = (char **)malloc(sizeof(char *) * (i + 1));
+	new_environ = (char **)malloc(sizeof(char *) * (i + 2));
 	if (new_environ == NULL)
 	{
 		errno = ENOMEM;
@@ -43,86 +42,93 @@ int env_manipulation(char *newenv, char ***_environ, int i)
 		return (-1);
 	}
 	for (j = 0; j < i; j++)
-		new_environ[j] = (*_environ)[j];
+		new_environ[j] = environ[j];
 	new_environ[i] = newenv;
 	new_environ[i + 1] = NULL;
-	free(*_environ);
-	*_environ = new_environ;
+	free(environ);
+	environ = new_environ;
 	return (0);
 }
 
 /**
  * _setenv - Initialize a new environ, or modify an existing one
  * @arg: a pointer to an array of pointers
- * @_environ: a pointer to the array of environment variables
+ * @count: the number of commands until moment
  *
  * Return: return zero on success, or -1 on error
  */
 
-int _setenv(char **arg, char ***_environ)
+int _setenv(char **arg, int count)
 {
-	char *newenv;
+	char *newenv = NULL;
 	int i;
 
 	if (arg[1] == NULL || _strlen(arg[1]) == 0 || arg[1][0] == '=')
 	{
-		errno = EINVAL;
-		perror("");
+		/*errno = EINVAL;*/
+		/*fprintf(stderr, "./hsh: %d: setenv: ", count);*/
+		/*perror("");*/
 		return (-1);
 	}
 	if (arg[2] == NULL)
-		return (_unsetenv(arg, _environ));
+		return (_unsetenv(arg, count));
 	newenv = malloc(sizeof(char) * (_strlen(arg[1]) + _strlen(arg[2]) + 2));
 	if (newenv == NULL)
 	{
 		errno = ENOMEM;
+		/*fprintf(stderr, "./hsh: %d: setenv: ", count);*/
 		perror("");
 		return (-1);
 	}
-	_strcpy(newenv, arg[1]);
-	_strcat(newenv, "=");
-	_strcat(newenv, arg[2]);
-	for (i = 0; (*_environ)[i] != NULL; i++)
+	newenv[0] = '\0';
+	newenv = _strcpy(newenv, arg[1]);
+	newenv = _strcat(newenv, "=");
+	newenv = _strcat(newenv, arg[2]);
+	for (i = 0; environ[i] != NULL; i++)
 	{
-		if (_strncmp((*_environ)[i], arg[1], _strlen(arg[1])) == 0)
+		if (_strncmp(environ[i], arg[1], _strlen(arg[1])) == 0)
 		{
-			if (_strcmp((*_environ)[i], newenv) == 0)
+			if (_strcmp(environ[i], newenv) == 0)
 			{
 				free(newenv);
 				return (0);
 			}
-			free((*_environ)[i]);
-			(*_environ)[i] = newenv;
+			free(environ[i]);
+			environ[i] = newenv;
 			return (0);
 		}
 	}
-	return (env_manipulation(newenv, _environ, i));
+	return (env_manipulation(newenv, i));
 }
 
 /**
  * _unsetenv - Remove an environment variable
  * @arg: a pointer to an array of pointers
- * @_environ: a pointer of an array of environment variables
+ * @count: the number of commands until moment
  *
  * Return: zero on success, or -1 on error,
  */
 
-int _unsetenv(char **arg, char ***_environ)
+int _unsetenv(char **arg, int count __attribute__((unused)))
 {
 	int n, m;
 
 	if (arg[1] == NULL || _strlen(arg[1]) == 0 || arg[1][0] == '=')
 	{
-		errno = EINVAL;
-		perror("");
+		/*errno = EINVAL;*/
+		/*fprintf(stderr, "./hsh: %d: unsetenv: ", count);*/
+		/*perror("");*/
 		return (-1);
 	}
-	for (n = 0; (*_environ)[n] != NULL; n++)
+	for (n = 0; environ[n] != NULL; n++)
 	{
-		if (_strncmp((*_environ)[n], arg[1], _strlen(arg[1])) == 0)
+		if (_strncmp(environ[n], arg[1], _strlen(arg[1])) == 0)
 		{
-			for (m = n + 1; (*_environ)[n] != NULL; n++, m++)
-				(*_environ)[n] = (*_environ)[m];
+			free(environ[n]);
+			environ[n] = NULL;
+			for (m = n + 1; environ[m] != NULL; n++, m++)
+				environ[n] = environ[m];
+			environ[n] = NULL;
 			return (0);
 		}
 	}
