@@ -25,11 +25,13 @@ int _cd(char *path)
 		if (oldpwd != NULL)
 		{
 			newpwd = getenv("OLDPWD");
+			if (newpwd == NULL)
+				return (-1);
 			i = 1;
 		}
 		else
 		{
-			fprintf(stderr, "OLDPWD not set\n");
+			/*fprintf(stderr, "OLDPWD not set\n");*/
 			return (1);
 		}
 	}
@@ -49,7 +51,6 @@ int _cd(char *path)
 		fprintf(stderr, "error setting OLDPWD");
 	if (i == 1)
 		print_pwd();
-
 	return (0);
 }
 /**
