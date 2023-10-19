@@ -65,12 +65,12 @@ int error_stat(int code);
 
 void print_pwd(void);
 
-/*our own version of functions*/
+/* -------------------custom functions------------------- */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
 char *_strtok(char *str, char *dlm);
 int is_dlm(int c, const char *dlm);
 
-/*string manipulation functons*/
+/* -------------------string manipulation functons------------------- */
 int _strcmp(char *s1, char *s2);
 char *_strcpy(char *dest, char *src);
 char *_strdup(char *str);
@@ -82,25 +82,25 @@ int _atoi(char *s);
 int _strncmp(char *s1, char *s2, size_t n);
 char *_strncpy(char *dest, char *src, int n);
 
-/* printing error functions*/
+/* -------------------printing error functions------------------- */
 int _putchar2(char c);
 int recursive_int2(int n);
 int _printfint2(va_list args);
 int _printfstring2(va_list args);
 int _printferror(const char *format, ...);
 
-/*built-in functions*/
+/* -------------------built-in functions------------------- */
 int _env(void);
-int _setenv(char **arg, char ***_environ);
-int env_manipulation(char *newenv, char ***_environ, int i);
-int _unsetenv(char **arg, char ***_environ);
+int _setenv(char **arg, int count);
+int env_manipulation(char *newenv, int i);
+int _unsetenv(char **arg, int count);
 int _cd(char *path);
 int exiting(char *arg, int count);
 
 void free_grid(char **grid);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 
-/*format handler funtions*/
+/* -------------------format handler funtions------------------- */
 int c_hand(va_list *ap);
 int s_hand(va_list *ap);
 int percent_hand(void);

@@ -19,14 +19,14 @@
 
 char *checkpoint(char **arg, char *string, int count)
 {
-	char *cmd;
-	int err_code = error_stat(-16);
+	char *cmd = NULL;
+	int i, err_code = error_stat(-16);
 
 	if (_strcmp(arg[0], "exit") == 0)
 	{
 		if (arg[1] != NULL)
 			err_code = exiting(arg[1], count);
-		/*_alias(NULL, 0);*/
+		free_grid(environ); /*_alias(NULL, 0);*/
 		free(string), free(arg), exit(err_code);
 	}
 	if (_strcmp(arg[0], "env") == 0)
@@ -34,16 +34,16 @@ char *checkpoint(char **arg, char *string, int count)
 		error_stat(_env());
 		return (arg[0]);
 	}
-	/*if (_strcmp(arg[0], "setenv") == 0)*/
-	/*{*/
-		/*error_stat(_setenv(arg));*/
-		/*return (arg[0]);*/
-	/*}*/
-	/*if (_strcmp(arg[0], "unsetenv") == 0)*/
-	/*{*/
-		/*error_stat(_unsetenv(arg));*/
-		/*return (arg[0]);*/
-	/*}*/
+	if (_strcmp(arg[0], "setenv") == 0)
+	{
+		i = _setenv(arg, count), error_stat(i);
+		return (arg[0]);
+	}
+	if (_strcmp(arg[0], "unsetenv") == 0)
+	{
+		i = _unsetenv(arg, count), error_stat(i);
+		return (arg[0]);
+	}
 	if (_strcmp(arg[0], "cd") == 0)
 	{
 		error_stat(_cd(arg[1]));
@@ -69,25 +69,26 @@ char *checkpoint(char **arg, char *string, int count)
 char *_which(char *arg)
 {
 	const char *variableName = "PATH";
-	char *variableValue;
+	char *variableValue = NULL;
 	char *fullpath = NULL;
-	char *pathcopy = NULL, *token;
+	char *pathcopy = NULL, *token = NULL;
 
 	if (!(arg[0] == '/' || arg[0] == '.'))
 	{
 		fullpath = malloc(1024);
 		if (fullpath == NULL)
 			return (NULL);
+		fullpath[0] = '\0';
 		variableValue = getenv(variableName);
-		pathcopy = _strdup(variableValue);
+		pathcopy = strdup(variableValue);
 		if (pathcopy == NULL)
 			return (NULL);
 		token = strtok(pathcopy, ":");
 		while (token != NULL)
 		{
-			fullpath = _strcpy(fullpath, token);
-			fullpath = _strcat(fullpath, "/");
-			fullpath = _strcat(fullpath, arg);
+			fullpath = strcpy(fullpath, token);
+			fullpath = strcat(fullpath, "/");
+			fullpath = strcat(fullpath, arg);
 			if (access(fullpath, X_OK) == 0)
 			{
 				free(pathcopy);
