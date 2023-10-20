@@ -23,12 +23,7 @@ char *checkpoint(char **arg, char *string, int count)
 	int i, err_code = error_stat(-16);
 
 	if (_strcmp(arg[0], "exit") == 0)
-	{
-		if (arg[1] != NULL)
-			err_code = exiting(arg[1], count);
-		free_grid(environ); /*_alias(NULL, 0);*/
-		free(string), free(arg), exit(err_code);
-	}
+		exit_with_code(err_code, count, arg, string);
 	if (_strcmp(arg[0], "env") == 0)
 	{
 		error_stat(_env());
@@ -54,8 +49,11 @@ char *checkpoint(char **arg, char *string, int count)
 		error_stat(_alias(arg, 0));
 		return (arg[0]);
 	} /* betty has an issue with number of lines */
-	/*if (arg[0][0] == '/' || arg[0][0] == '.')*/
-		/*return (arg[0]);*/
+	if ((_strcmp(arg[0], "echo") == 0) && (arg[1][0] == '$'))
+	{
+		i = echo_dollar(arg), error_stat(i);
+		return (arg[0]);
+	}
 	cmd = _which(arg[0]);
 	return (cmd);
 }
@@ -126,6 +124,8 @@ int is_builin(char *cmd)
 	else if (_strcmp(cmd, "cd") == 0)
 		return (0);
 	else if (_strcmp(cmd, "alias") == 0)
+		return (0);
+	else if (_strcmp(cmd, "echo") == 0)
 		return (0);
 	else
 		return (-1);

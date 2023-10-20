@@ -62,8 +62,11 @@ int is_input_eof(void);
 char **cmd_list(char **array);
 void semicolon_parser(char ***next_ptr);
 int error_stat(int code);
-
+int comment_out(char **arg);
+void exit_with_code(int err_code, int count, char **arg, char *string);
 void print_pwd(void);
+char *readfile(FILE *stream);
+void file_mode(char **av);
 
 /* -------------------custom functions------------------- */
 ssize_t _getline(char **lineptr, size_t *n, FILE *stream);
@@ -96,6 +99,7 @@ int env_manipulation(char *newenv, int i);
 int _unsetenv(char **arg, int count);
 int _cd(char *path);
 int exiting(char *arg, int count);
+int echo_dollar(char **arg);
 
 void free_grid(char **grid);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
@@ -121,5 +125,6 @@ alias_list *new_alias(char **arg, int s1, int s2);
 int _alias(char **arg, int mode);
 int alias_cont(char **arg, char ***name, char ***value, int mode);
 int alias_sub(char **string, char ***name, char ***value);
+char *alias_of_alias(char *cmd, char ***name, char ***value);
 
 #endif
