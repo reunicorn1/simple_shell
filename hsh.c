@@ -102,6 +102,7 @@ void loop(char **prog_name)
 		count++;  /*to keep track of number of loops*/
 		input_str = recieve_input(); /* getline in the hood */
 		arg = toker(input_str); /* tokonize the input */
+		comment_out(arg);
 		if (arg[0] != NULL)
 		{
 			status = command_runner(arg, input_str, count, &error, prog_name);
@@ -139,6 +140,9 @@ int main(int ac __attribute__((unused)), char **av)
 	}
 	env_cp[i] = NULL;
 	environ = env_cp;
-	loop(&av[0]);
+	if (av[1] != NULL)
+		file_mode(av);
+	else
+		loop(&av[0]);
 	return (0);
 }

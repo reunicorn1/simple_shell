@@ -46,13 +46,14 @@ char *recieve_input(void)
 	{
 		if (isatty(STDIN_FILENO))
 			write(1, "\n", 1);
-		/*_alias(NULL, 0);*/
+		_alias(NULL, 0);
 		free(str);
 		free_grid(environ);
 		exit(error_stat(-16));
 	}
 	str[input_len - 1] = '\0';
-	/*_alias(&str, 1);*/
+	if (strlen(str) != 0)
+		_alias(&str, 1);
 	return (str);
 }
 

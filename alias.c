@@ -14,7 +14,7 @@
 
 alias_list *new_alias(char **arg, int s1, int s2)
 {
-	alias_list *a;
+	alias_list *a = NULL;
 	int h, i = 0, j, k;
 
 	while (arg[i] != NULL)
@@ -28,7 +28,7 @@ alias_list *new_alias(char **arg, int s1, int s2)
 		free(a);
 		return (NULL);
 	}
-	_strncpy(a->name, arg[s1], s2);
+	a->name = strncpy(a->name, arg[s1], s2);
 	a->name[s2] = '\0';
 	a->value = malloc(sizeof(char) * 100);
 	if (a->value == NULL)
@@ -36,19 +36,10 @@ alias_list *new_alias(char **arg, int s1, int s2)
 		free(a->name), free(a);
 		return (NULL);
 	}
-	k = 0, h = s1, j = s2 + 2;
-	while (!(arg[h][j] == 34 || arg[h][j] == 39) && h < i)
+	k = 0;
+	for (h = s1, j = s2 + 1, k = 0; arg[h][j] != '\0'; j++, k++)
 	{
-		if (arg[h][j] == '\0')
-			a->value[k] = ' ', h++, j = 0;
-		else
-			a->value[k] = arg[h][j], j++;
-		k++;
-	}
-	if (!(arg[h][j] == 34 || arg[h][j] == 39) && h == i)
-	{
-		free(a->name), free(a->value), free(a);
-		return (NULL);
+		a->value[k] = arg[h][j];
 	}
 	a->value[k] = '\0';
 	return (a);
@@ -68,14 +59,14 @@ alias_list *new_alias(char **arg, int s1, int s2)
 int _alias_modify(char **arg, char ***name, char ***value, int s1, int s2)
 {
 	int i;
-	alias_list *b;
+	alias_list *b = NULL;
 
 	b = new_alias(arg, s1, s2);
 	if (b == NULL)
 		return (-1);
 	for (i = 0; (*name)[i] != NULL; i++)
 	{
-		if (_strcmp((*name)[i], b->name) == 0)
+		if (strcmp((*name)[i], b->name) == 0)
 		{
 			free((*value)[i]);
 			free(b->name);
@@ -84,7 +75,6 @@ int _alias_modify(char **arg, char ***name, char ***value, int s1, int s2)
 			return (0);
 		}
 	}
-	printf("%d\n", i);
 	*name = (char **)realloc(*name, sizeof(char *) * (i + 2));
 	if (*name == NULL)
 		return (-1);
@@ -96,8 +86,6 @@ int _alias_modify(char **arg, char ***name, char ***value, int s1, int s2)
 	(*value)[i] = b->value;
 	(*value)[i + 1] = NULL;
 	free(b);
-	printf("newvalue = %s\n", (*value)[i]);
-	printf("newname = %s\n", (*name)[i]);
 	return (0);
 }
 
@@ -120,7 +108,7 @@ int print_alias(char *s, char ***name, char ***value)
 			printf("%s='%s'\n", (*name)[i], (*value)[i]);
 		else
 		{
-			if (_strcmp((*name)[i], s) == 0)
+			if (strcmp((*name)[i], s) == 0)
 			{
 				printf("%s='%s'\n", (*name)[i], (*value)[i]);
 				return (0);
@@ -158,7 +146,7 @@ int alias_cont(char **arg, char ***name, char ***value, int mode)
 	}
 	if (!arg[1] || (strcmp(arg[1], "-p") == 0))
 	{
-		print_alias(NULL, name, value); /* prints the complete existing datase t*/
+		print_alias(NULL, name, value); /* prints the complete existing database t*/
 		return (0);
 	}
 	return (1);
@@ -175,19 +163,21 @@ int alias_cont(char **arg, char ***name, char ***value, int mode)
 int _alias(char **arg, int mode)
 {
 	static char **name, **value;
-	int i, j = 1, flag;
+	int i = 0, j = 1, flag;
 
 	if (name == NULL)
 	{
 		name = malloc(sizeof(char *) * 1);
 		if (!name)
 			return (-1);
+		name[0] = NULL;
 	}
 	if (value == NULL)
 	{
 		value = malloc(sizeof(char *) * 1);
 		if (!value)
 			return (-1);
+		value[0] = NULL;
 	}
 	i = alias_cont(arg, &name, &value, mode);
 	if (i == 1)
