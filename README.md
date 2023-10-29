@@ -7,7 +7,7 @@ The shell operates by **displaying a prompt**, accepting input from the user, **
 In essence, this project emulates the functionality of a typical shell program, enabling users to issue commands, interact with programs, and manage their system through a familiar command-line interface.
 
 # How This works
-![A flowchart of the simple shell framework](https://postimg.cc/BXy1fBFQ)
+[![image.png](https://i.postimg.cc/zGDwWdXW/image.png)](https://postimg.cc/BXy1fBFQ)
 
 ### `main`
 
@@ -138,7 +138,7 @@ After the executed command completes, the loop function returns to its initial s
 The checkpoint function already handles exiting. **Ctrl+D** and **EOF** condition is handled early on the process in the `recieve_input` function.
 
 
-### Authors
+# Authors
 
 Reem Osama
 Yahia Nasr
