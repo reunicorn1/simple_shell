@@ -140,7 +140,5 @@ The checkpoint function already handles exiting. **Ctrl+D** and **EOF** conditio
 
 # Authors
 
-|                |                       |
-|----------------|-------------------------------|-----------------------------|
-|Reem Osama|ireosama1@gmail.com
-|Yahia Nasr         |yahyasadig2013@gmail.com
+Reem Osama  |  ireosama1@gmail.com
+Yahia Nasr  |  yahyasadig2013@gmail.com
